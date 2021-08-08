@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Remote Code Executor</title>
+    </head>
+    <body>
+    
+        <label for="langs-input">Choose a language</label>
+        <input list="langs" id="lang-input" name="langs-input">
+        <datalist id="langs">
+            <option value="Python2">
+            <option value="Python3">
+            <option value="Javascript">
+            <option value="Java8">
+            <option value="Java11">
+            <option value="Go">
+            <option value="Typescript">
+        </datalist>
+
+        
+
+        <button id="submit-btn"> Submit Code</button>
+        <br>
+        <textarea id="code-input" name="code-input" rows="50" cols="100">
+        </textarea>
+        <br>
+
+        <h1>Build Progress</h1>
+        <div id="build-progress"></div>
+        
+        <h2>Output</h2>
+        <div id="code-output"></div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            document.querySelector("#submit-btn").addEventListener('click', () => {
+                var code = document.querySelector("#code-input").value;
+                var lang = document.querySelector("#lang-input").value;
+                socket.emit('code-submission', JSON.stringify({code: code, lang: lang}));
+            })
+            
+            
+            socket.on('progress', (progress) => {
+                let paraEl = document.createElement("p");
+                paraEl.innerHTML = progress;
+                document.querySelector("#build-progress").append(paraEl);
+            })
+
+            socket.on('output', (output) => {
+                document.querySelector("#code-output").innerHTML = output;
+            })
+        </script>
+
+    </body>
+</html>

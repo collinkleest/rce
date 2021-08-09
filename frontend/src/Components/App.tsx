@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Nav } from './Nav/Nav';
 import './App.css';
 import { Col, Container, Dropdown, Row } from 'react-bootstrap';
@@ -14,6 +14,8 @@ const App : React.FC = () => {
   const [ editorLanguage, setEditorLanguage ] = useState("javascript");
   const [ editorCode, setEditorCode ] = useState("");
   const [ backendLanguage, setBackendLanguage ] = useState("javascript");
+  const editorRef = useRef(null);
+
 
   useEffect(() => {
     socket = io();
@@ -53,8 +55,17 @@ const App : React.FC = () => {
     socket.emit('code-submission', JSON.stringify(submission));
   }
 
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+  }
+
+  function showValue() {
+    console.log(editorRef.current.getPosition()); 
+  }
+
   return (
     <div>
+      <button onClick={showValue}>Click</button>
       <Nav 
         roomId={roomId}
         roomJoinHandler={roomJoinHandler}
@@ -134,6 +145,7 @@ const App : React.FC = () => {
               defaultLanguage="javascript"
               language={editorLanguage}
               onChange={editorValueChange}
+              onMount={handleEditorDidMount}
               value={editorCode}
               theme={editorTheme}
             />

@@ -5,11 +5,13 @@ import { Lang } from './models/lang';
 
 const dockerConfig : DockerOptions = {
     socketPath: '/run/docker.sock',
+    timeout: 10000,
 } 
 
 const docker : Docker = new Docker(dockerConfig);
 
 export class DockerManager {
+    
     static build(socket: Socket, lang: string, roomId: string, ioServer: Server){
         const { id } = socket;
         lang = lang.toLowerCase();
@@ -41,9 +43,10 @@ export class DockerManager {
         docker.run(imageId, [], stdout).then((data) => {
             const container : Container = data[1];
             ioServer.to(roomId).emit('code-output', stdout.toString());
-            container.remove();
+            container.kill();
         }).catch((err) => {
             console.error(err);
         })
     }
+    
 }

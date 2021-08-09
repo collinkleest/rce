@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { FileManager } from './src/FileManager';
 import { DockerManager } from './src/DockerManager';
 import { Submission } from './src/models/submission';
+import { apiRouter } from './src/routes';
 
 const app  = express();
 const server = http.createServer(app);
@@ -36,6 +37,8 @@ ioServer.on('connection', (socket: Socket) => {
     })
 
 });
+
+app.use('/api', apiRouter);
 
 server.listen(3000, () => {
     console.log('listening on *.*.*.*:3000');

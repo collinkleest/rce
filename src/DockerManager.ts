@@ -5,8 +5,8 @@ import { Lang } from './models/lang';
 
 const dockerConfig : DockerOptions = {
     socketPath: '/run/docker.sock',
-    timeout: 10000,
-} 
+    timeout: 5000
+}
 
 const docker : Docker = new Docker(dockerConfig);
 
@@ -43,10 +43,15 @@ export class DockerManager {
         docker.run(imageId, [], stdout).then((data) => {
             const container : Container = data[1];
             ioServer.to(roomId).emit('code-output', stdout.toString());
-            container.kill();
+            this.cleanUpContainer(container);
         }).catch((err) => {
             console.error(err);
         })
     }
-    
+
+    static async cleanUpContainer(container: Container) {
+        await container.kill();
+        container.remove();
+    }
+
 }

@@ -11,6 +11,7 @@ const server = http.createServer(app);
 const ioServer : Server = new Server(server);
 
 app.use('/', express.static(__dirname + '/frontend/build/'));
+app.use(express.json());
 
 ioServer.on('connection', (socket: Socket) => {
     console.log(`${socket.id} has connected`);

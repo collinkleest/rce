@@ -1,4 +1,4 @@
-export enum Images {
+export enum Image {
     PYTHON="python:3-alpine",
     PYTHON3="python:3-alpine",
     PYTHON2="python:2-alpine",

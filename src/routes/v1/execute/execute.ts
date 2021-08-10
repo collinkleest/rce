@@ -3,6 +3,7 @@ import { RemoteJob } from '../../../core/RemoteJob';
 import { RemoteJobParams } from '../../../models/remote-job';
 import Logger from 'js-logger';
 import { ImageBuildFailureResponse, RemoteOutputResponse } from '../../../models/resposnes/execute-responses'; 
+import { ExecuteRequestBody } from '../../../models/requests/execute-request';
 
 const logger = Logger.get('ExecuteRoute');
 const executeRoutes = express.Router();
@@ -13,7 +14,7 @@ executeRoutes.post('/', async (req, res) => {
         language,
         filename,
         code
-    } = req.body;
+    } = req.body as ExecuteRequestBody;
 
     if (!language || typeof language !== 'string'){
         return res.status(400).send({

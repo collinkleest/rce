@@ -1,7 +1,7 @@
 import Docker, { Container, DockerOptions } from 'dockerode';
 import { Server, Socket } from 'socket.io';
 import streams from 'memory-streams';
-import { Lang } from './models/lang';
+import { Lang } from './data/lang';
 
 const dockerConfig : DockerOptions = {
     socketPath: '/run/docker.sock',

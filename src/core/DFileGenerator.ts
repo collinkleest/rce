@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Images } from '../models/images';
+import { Image } from '../models/image';
 import ejs from 'ejs';
 
 export class DFileGenerator {
@@ -24,26 +24,26 @@ export class DFileGenerator {
         else if (this.language === 'javascript'){
             ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/javascript-docker-template.ejs')).toString();
             dockerFileContent = ejs.render(ejsTemplate, {
-                imageTag: Images.JAVASCRIPT,
+                imageTag: Image.JAVASCRIPT,
                 fileName: this.filename
             })
         } else if (this.language === 'typescript') {
             ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/typescript-docker-template.ejs')).toString();
             dockerFileContent = ejs.render(ejsTemplate, {
-                imageTag: Images.TYPESCRIPT,
+                imageTag: Image.TYPESCRIPT,
                 fileNameTitle: this.fileNameTitle
             })
         }else if (this.language === 'java' || this.language || 'java11'){
             ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/java-docker-template.ejs')).toString();
             if (this.language === 'java8'){
                 dockerFileContent = ejs.render(ejsTemplate, {
-                    imageTag: Images.JAVA8,
+                    imageTag: Image.JAVA8,
                     fileName: this.filename,
                     fileNameTitle: this.fileNameTitle,
                 }) 
             } else {
                 dockerFileContent = ejs.render(ejsTemplate, {
-                    imageTag: Images.JAVA11,
+                    imageTag: Image.JAVA11,
                     fileName: this.filename,
                     fileNameTitle: this.fileNameTitle,
                 })
@@ -59,13 +59,13 @@ export class DFileGenerator {
         
         if (this.language === 'python' || this.language === 'python3'){
             pythonDockerFileContent = ejs.render(ejsTemplate, {
-                imageTag: Images.PYTHON,
+                imageTag: Image.PYTHON,
                 runTime: "python3",
                 fileName: this.filename
             });
         } else {
             pythonDockerFileContent = ejs.render(ejsTemplate, {
-                imageTag: Images.PYTHON2,
+                imageTag: Image.PYTHON2,
                 runTime: "python",
                 fileName: this.filename
             })

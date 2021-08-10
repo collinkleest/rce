@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync, copyFileSync, rmdirSync } from 'fs';
 import { Socket } from 'socket.io';
-import { Lang } from './models/lang';
+import { Lang } from './data/lang';
 
 export class FileManager {
 

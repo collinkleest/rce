@@ -6,6 +6,7 @@ import { RemoteJobParams } from '../models/remote-job';
 import { JobState } from '../models/job-states';
 import { DFileGenerator } from './DFileGenerator';
 import streams from 'memory-streams';
+import { Server } from 'socket.io';
 
 
 const logger = Logger.get('RemoteJob');
@@ -61,7 +62,7 @@ export class RemoteJob {
         logger.info(`Successfully set up job with uuid: ${this.uuid}`)
     }
 
-    async buildImage() {
+    async buildImage(ioServer?: Server, roomId?: string) {
         if (this.state !== JobState.SETUP){
             throw new Error('Job should be setup before building an image');
         }
@@ -70,6 +71,21 @@ export class RemoteJob {
                 context: `${this.dir}${this.uuid}`, 
                 src: ['Dockerfile', this.filename]
         });
+        
+        if (ioServer && roomId) {
+            this.state = JobState.BUILT;
+            return await new Promise((resolve, reject) => {
+                docker.modem.followProgress(imageStream, (err, res) => {
+                    if (err){
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                }, (progress) => {
+                    ioServer.to(roomId).emit('progress', progress.stream);
+                })
+            })
+        }
 
         this.state = JobState.BUILT;
         return await new Promise((resolve, reject) => {
@@ -82,6 +98,8 @@ export class RemoteJob {
             })
         })
     }
+
+
 
     async execute(){
         logger.info(`Executing job ${this.uuid}`);

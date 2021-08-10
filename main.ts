@@ -6,6 +6,8 @@ import { DockerManager } from './src/DockerManager';
 import { Submission } from './src/models/submission';
 import { apiRouter } from './src/routes';
 
+import { codeSubmission } from './src/helpers/socket-helpers';
+
 const app  = express();
 const server = http.createServer(app);
 const ioServer : Server = new Server(server);
@@ -28,13 +30,11 @@ ioServer.on('connection', (socket: Socket) => {
 
     socket.on('disconnect', () => {
         console.log(` ${socket.id} has disconnected`);
-        FileManager.remove(socket);
     })
     
     socket.on('code-submission', (submission: string) => {
         const parsedSubmission : Submission = JSON.parse(submission);
-        FileManager.build(socket, parsedSubmission.code, parsedSubmission.lang);
-        DockerManager.build(socket, parsedSubmission.lang, parsedSubmission.roomId, ioServer);
+        codeSubmission(parsedSubmission, ioServer);
     })
 
 });

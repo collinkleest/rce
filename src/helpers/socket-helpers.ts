@@ -31,7 +31,7 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
 
     await remoteJob.setup();
 
-    let buildImgData : any = await remoteJob.buildImage(ioServer, submission.roomId);
+    const buildImgData : any = await remoteJob.buildImage(ioServer, submission.roomId);
     if (buildImgData) {
         const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
         const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))

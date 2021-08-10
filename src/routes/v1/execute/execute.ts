@@ -43,7 +43,7 @@ executeRoutes.post('/', async (req, res) => {
 
     await remoteJob.setup();
 
-    let buildImgData : any = await remoteJob.buildImage();
+    const buildImgData : any = await remoteJob.buildImage();
     if (buildImgData) {
         const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
         const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))

@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import { RemoteJob } from '../core/RemoteJob';
 import { RemoteJobParams } from '../models/remote-job';
 import { Submission } from '../models/submission';
+const logger = Logger.get('SockerHelpers');
 
 
 const codeSubmission = async (submission : Submission, ioServer : Server) => {
@@ -32,8 +33,17 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
 
     let buildImgData : any = await remoteJob.buildImage(ioServer, submission.roomId);
     if (buildImgData) {
-        let found = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
-        remoteJob.imageId = found['aux']['ID'];
+        const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
+        const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
+        if (auxObjectFound && !errorFound) {
+            remoteJob.imageId = auxObjectFound['aux']['ID'];
+        } else {
+            logger.error(`Build image was unsuccessful`);
+            await remoteJob.cleanupFiles();
+            ioServer.to(submission.roomId).emit('code-output', errorFound.error);
+            throw new Error('Image build was unsuccessful');
+        }
+        remoteJob.imageId = auxObjectFound['aux']['ID'];
     }
 
     const remoteOutput = await remoteJob.execute();

@@ -30,7 +30,7 @@ executeRoutes.post('/', async (req, res) => {
     }
 
     const remoteJobParams : RemoteJobParams = {
-        language: language,
+        language: language.trim(),
         code: code,
         filename: filename
     }

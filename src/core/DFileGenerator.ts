@@ -1,43 +1,61 @@
 import fs from 'fs';
+import path from 'path';
 import { Images } from '../models/images';
-
+import ejs from 'ejs';
 
 export class DFileGenerator {
     language : string;
     filename : string;
+    fileNameTitle : string;
 
     constructor(language : string, filename: string){
         this.language = language;
         this.filename = filename;
+        this.fileNameTitle = filename.split('.').slice(0, -1).join('.');
     }
 
     generate() : string {
         let dockerFileContent = "";
+        let ejsTemplate;
+
         if (this.language === 'python' || this.language === 'python3' || this.language === 'python2'){
-            if (this.language === 'python2'){
-                dockerFileContent += `FROM ${Images.PYTHON2}\n`;
-            } else {
-                dockerFileContent += `FROM ${Images.PYTHON}\n`;
-            }
-            dockerFileContent += "WORKDIR /usr/src/app\n";
-            dockerFileContent += "COPY . .\n";
-            dockerFileContent += `CMD [ "${this.filename}" ]\n`;
-            if (this.language === 'python2') {
-                dockerFileContent += 'ENTRYPOINT ["python"]'
-            } else {
-                dockerFileContent += 'ENTRYPOINT ["python3"]'
-            }
-        } else if (this.language === 'javascript' || this.language === 'typescript'){
-            dockerFileContent += `FROM ${Images.JAVASCRIPT}\n`;
-            dockerFileContent += `WORKDIR /app\n`;
-            dockerFileContent += 'COPY . .\n'
-            if (this.language === 'typescript'){
-                dockerFileContent += 'RUN npm install typescript -g\n';
-                dockerFileContent += `RUN tsc ${this.filename}\n`
-            }
-            dockerFileContent += `CMD [ "node", "${this.filename}" ]`
+            dockerFileContent = this.generatePython();
+        }
+        else if (this.language === 'javascript'){
+            ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/javascript-docker-template.ejs')).toString();
+            dockerFileContent = ejs.render(ejsTemplate, {
+                imageTag: Images.JAVASCRIPT,
+                fileName: this.filename
+            })
+        } else if (this.language === 'typescript') {
+            ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/typescript-docker-template.ejs')).toString();
+            dockerFileContent = ejs.render(ejsTemplate, {
+                imageTag: Images.TYPESCRIPT,
+                fileNameTitle: this.fileNameTitle
+            })
         }
         return dockerFileContent;
+    }
+
+    generatePython() : string {
+        let pythonDockerFileContent = '';
+        let ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/python-docker-template.ejs')).toString();
+        
+        if (this.language === 'python' || this.language === 'python3'){
+            pythonDockerFileContent = ejs.render(ejsTemplate, {
+                imageTag: Images.PYTHON,
+                runTime: "python3",
+                fileName: this.filename
+            });
+        } else {
+            pythonDockerFileContent = ejs.render(ejsTemplate, {
+                imageTag: Images.PYTHON2,
+                runTime: "python",
+                fileName: this.filename
+            })
+        }
+
+        return pythonDockerFileContent;
     }
 
 }

@@ -1,10 +1,14 @@
 import express from 'express';
 import { RemoteJob } from '../../../core/RemoteJob';
 import { RemoteJobParams } from '../../../models/remote-job';
+import Logger from 'js-logger';
+import { ImageBuildFailureResponse, RemoteOutputResponse } from '../../../models/resposnes/execute-responses'; 
 
+const logger = Logger.get('ExecuteRoute');
 const executeRoutes = express.Router();
 
 executeRoutes.post('/', async (req, res) => {
+    logger.info(`Request received with body of ${req.body} from ${req.ip}`);
     const { 
         language,
         filename,
@@ -41,15 +45,27 @@ executeRoutes.post('/', async (req, res) => {
 
     let buildImgData : any = await remoteJob.buildImage();
     if (buildImgData) {
-        let found = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
-        remoteJob.imageId = found['aux']['ID'];
+        const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
+        const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
+        if (auxObjectFound && !errorFound) {
+            remoteJob.imageId = auxObjectFound['aux']['ID'];
+        } else {
+            logger.error(`Build image was unsuccessful`);
+            await remoteJob.cleanupFiles();
+            res.status(500).send({
+                message: 'The image was unable to build',
+                error: errorFound.error,
+                imageStream: buildImgData,
+            } as ImageBuildFailureResponse)
+            throw new Error('Image build was unsuccessful');
+        }
     }
 
     const remoteOutput = await remoteJob.execute();
 
     await remoteJob.cleanup();
     
-    const output = {
+    const output : RemoteOutputResponse = {
         language: language,
         output: {
             stdout: remoteOutput.stdout.toString(),
@@ -57,7 +73,7 @@ executeRoutes.post('/', async (req, res) => {
         }
     }
 
-    res.send(output);
+    res.status(200).send(output as RemoteOutputResponse);
 })
 
 

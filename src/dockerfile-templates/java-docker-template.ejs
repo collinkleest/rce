@@ -2,4 +2,4 @@ FROM <%= imageTag %>
 COPY . /var/www/java
 WORKDIR /var/www/java
 RUN javac <%= fileName %>
-CMD ["java", <%= fileNameTitle %>]
+CMD ["java", "<%= fileNameTitle %>"]

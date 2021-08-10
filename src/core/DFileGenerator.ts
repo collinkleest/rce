@@ -33,9 +33,25 @@ export class DFileGenerator {
                 imageTag: Images.TYPESCRIPT,
                 fileNameTitle: this.fileNameTitle
             })
-        }
+        }else if (this.language === 'java' || this.language || 'java11'){
+            ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/java-docker-template.ejs')).toString();
+            if (this.language === 'java8'){
+                dockerFileContent = ejs.render(ejsTemplate, {
+                    imageTag: Images.JAVA8,
+                    fileName: this.filename,
+                    fileNameTitle: this.fileNameTitle,
+                }) 
+            } else {
+                dockerFileContent = ejs.render(ejsTemplate, {
+                    imageTag: Images.JAVA11,
+                    fileName: this.filename,
+                    fileNameTitle: this.fileNameTitle,
+                })
+            }
+        } 
         return dockerFileContent;
     }
+
 
     generatePython() : string {
         let pythonDockerFileContent = '';

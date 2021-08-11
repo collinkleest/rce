@@ -47,9 +47,7 @@ export class RemoteJob {
         
         logger.info(`Setting up job with uuid: ${this.uuid}`);
         
-        const rootDirExists = await fs.promises.stat(this.dir);
-
-        if (!rootDirExists){
+        if (!(fs.existsSync(this.dir))){
             await fs.promises.mkdir(this.dir);
         }
 

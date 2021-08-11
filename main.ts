@@ -1,8 +1,6 @@
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { FileManager } from './src/FileManager';
-import { DockerManager } from './src/DockerManager';
 import { Submission } from './src/models/submission';
 import { apiRouter } from './src/routes';
 

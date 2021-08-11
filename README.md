@@ -31,9 +31,30 @@ yarn run watch
 
 ## Endpoints
 ```bash
-# GET /api/v1/runtimes # not currently implemented
+GET /api/v1/runtimes 
 POST /api/v1/execute
 ```
+
+### GET /api/v1/runtimes
+```json
+[
+  {
+    "language": "java",
+    "dockerImage": "openjdk:11-jdk-slim",
+    "aliases": [
+      "java11"
+    ]
+  },
+  {
+    "language": "python3",
+    "dockerImage": "python:3-alpine",
+    "aliases": [
+      "py3"
+    ]
+  }
+]
+```
+
 
 ### POST /api/v1/execute
 Example request body

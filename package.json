@@ -1,7 +1,8 @@
 {
   "name": "rce",
-  "version": "1.0.0",
-  "main": "index.js",
+  "description": "Remote Code Executor WebApp and API to execute code in docker containers. Developed with Socket.io, React, Dockerode",
+  "version": "0.0.1",
+  "main": "main.ts",
   "author": "Collin Kleest <collinkleest@gmail.com>",
   "license": "MIT",
   "scripts": {

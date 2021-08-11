@@ -72,7 +72,6 @@ Error Response
         {
             "stream":"[91mMain.java:1: error: ';' expected\npublic class Main { public static void main(String[] args) { System.out.println(\"Hello World\")}}\n                                                                                              ^\n[0m"
         },
-        },
         {
             "errorDetail": {
                 "code": 1,

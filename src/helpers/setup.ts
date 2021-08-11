@@ -1,7 +1,7 @@
 import Docker, { DockerOptions } from 'dockerode';
 import Logger from 'js-logger';
 
-import { Image } from '../models/image';
+import { DockerLangData } from '../data/docker-lang-data';
 
 const logger = Logger.get('SetupHelper');
 Logger.useDefaults();
@@ -18,11 +18,11 @@ export async function prePullImages() {
     
     const pulled : Set<string> = new Set();
     
-    for (const img of Object.values(Image)) {
-        if (!pulled.has(img)){
-            pulled.add(img);
-            logger.info(`Pulling docker image: ${img}`);
-            await docker.pull(img);
+    for (const img of Object.values(DockerLangData) as any) {
+        if (!pulled.has(img.imageTag)){
+            pulled.add(img.imageTag);
+            logger.info(`Pulling docker image: ${img.imageTag}`);
+            await docker.pull(img.imageTag);
         } 
     }
 

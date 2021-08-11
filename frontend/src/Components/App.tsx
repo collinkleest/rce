@@ -5,6 +5,7 @@ import './App.css';
 import { Col, Container, Dropdown, Row } from 'react-bootstrap';
 import io, { Socket } from 'socket.io-client';
 import { Submission } from '../../../src/models/submission'; 
+import { langSnippets } from '../data/lang-snippets'
 
 let socket: Socket;
 
@@ -40,6 +41,10 @@ const App : React.FC = () => {
     })
 
   }, [])
+
+  useEffect(() => {
+    setEditorCode(langSnippets[backendLanguage])
+  }, [backendLanguage])
 
   const editorValueChange = (value : string | undefined, event: Event) => {
     socket.emit('new-code', value, roomId);
@@ -87,31 +92,31 @@ const App : React.FC = () => {
                 <Dropdown.Item onClick={() => {
                     setEditorLanguage("typescript");
                     setBackendLanguage("typescript");
-                  }} href="#/action-4">
+                  }}>
                   TypeScript
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => {
                     setEditorLanguage("python");
                     setBackendLanguage("python2");
-                    }} href="#/action-2">
+                    }}>
                   Python2
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => {
                     setEditorLanguage("python");
                     setBackendLanguage("python3");
-                  }} href="#/action-3">
+                  }}>
                   Python3
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => {
                     setEditorLanguage("java");
                     setBackendLanguage("java8");
-                  }} href="#/action-4">
+                  }}>
                   Java8
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => {
                     setEditorLanguage("java");
                     setBackendLanguage("java11");
-                  }} href="#/action-4">
+                  }}>
                   Java11
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -171,7 +176,6 @@ const App : React.FC = () => {
       <Container fluid>
         <button onClick={runCodeHandler} className="btn btn-lg btn-success">Run Code</button>
       </Container>
-
     </div>  
   );
 }

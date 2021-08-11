@@ -26,5 +26,10 @@ export const runtimes : Runtime[] = [
         language: "typescript",
         dockerImage: Image.TYPESCRIPT,
         aliases: ['ts', 'microsoft']
+    },
+    {
+        language: "go",
+        dockerImage: Image.GO, 
+        aliases: ['golang']
     }
 ];

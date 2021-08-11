@@ -1,4 +1,6 @@
 FROM <%= imageTag %>
 WORKDIR /usr/src/app
 COPY . .
+ENV PYTHONOPTIMIZE=1
+ENV PYTHONFAULTHANDLER=1
 CMD [ "<%= runTime %>", "<%= fileName %>"]

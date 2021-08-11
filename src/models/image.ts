@@ -7,4 +7,5 @@ export enum Image {
     JAVA8="openjdk:8-jdk-alpine",
     JAVASCRIPT="node:alpine",
     TYPESCRIPT="node:alpine",
+    GO="golang:alpine"
 }

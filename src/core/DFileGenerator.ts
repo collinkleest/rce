@@ -48,7 +48,14 @@ export class DFileGenerator {
                     fileNameTitle: this.fileNameTitle,
                 })
             }
-        } 
+        } else if (this.language === 'go') {
+            ejsTemplate = fs.readFileSync(path.join(__dirname + '/../dockerfile-templates/go-docker-template.ejs')).toString();
+            dockerFileContent = ejs.render(ejsTemplate, {
+                imageTag: Image.GO,
+                fileName: this.filename,
+                fileNameTitle: this.fileNameTitle
+            })
+        }
         return dockerFileContent;
     }
 

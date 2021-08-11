@@ -3,7 +3,7 @@ Remote Code Executor WebApp and API to execute code in docker containers.
 Developed with [Socket.io](https://socket.io/), [React](https://reactjs.org/), [Dockerode](https://github.com/apocas/dockerode).
 
 ## Currently Suppored Languages
-`java8`, `java11`, `python2`, `python3`, `typescript`, `javascript`
+`java8`, `java11`, `python2`, `python3`, `typescript`, `javascript`, `golang`
 
 ## Development
 

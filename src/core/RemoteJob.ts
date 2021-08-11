@@ -47,7 +47,9 @@ export class RemoteJob {
         
         logger.info(`Setting up job with uuid: ${this.uuid}`);
         
-        if (!(fs.existsSync(this.dir))){
+        const rootDirExists = await fs.promises.stat(this.dir);
+
+        if (!rootDirExists){
             await fs.promises.mkdir(this.dir);
         }
 
@@ -66,19 +68,23 @@ export class RemoteJob {
         if (this.state !== JobState.SETUP){
             throw new Error('Job should be setup before building an image');
         }
-        
-        let imageStream = await docker.buildImage({
+
+        logger.info(`Building image for job: ${this.uuid}`);
+
+        this.state = JobState.BUILDING;
+
+        const imageStream = await docker.buildImage({
                 context: `${this.dir}${this.uuid}`, 
                 src: ['Dockerfile', this.filename]
         });
         
         if (ioServer && roomId) {
-            this.state = JobState.BUILT;
             return await new Promise((resolve, reject) => {
                 docker.modem.followProgress(imageStream, (err, res) => {
-                    if (err){
+                    if (err) {
                         reject(err);
                     } else {
+                        this.state = JobState.BUILT;
                         resolve(res);
                     }
                 }, (progress) => {
@@ -87,12 +93,12 @@ export class RemoteJob {
             })
         }
 
-        this.state = JobState.BUILT;
         return await new Promise((resolve, reject) => {
             docker.modem.followProgress(imageStream, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
+                    this.state = JobState.BUILT;
                     resolve(res);
                 }
             })
@@ -102,20 +108,24 @@ export class RemoteJob {
 
 
     async execute(){
-        logger.info(`Executing job ${this.uuid}`);
-        
         if (this.state !== JobState.BUILT){
             throw new Error('Job has not been built yet!');
         }
+        
+        this.state = JobState.EXECUTING;
+
+        logger.info(`Executing job: ${this.uuid}`);
 
         const stdout = new streams.WritableStream();
         const stderr = new streams.WritableStream();
-        let runData = await docker.run(this.imageId, [], [stdout, stderr], {Tty: false});
+        const runData = await docker.run(this.imageId, [], [stdout, stderr], {Tty: false});
         this.container = runData[1];
 
-        this.state = JobState.EXECUTED;
+        if (runData){
+            this.state = JobState.EXECUTED;
+        }
 
-        logger.info(`Finished executing job ${this.uuid}`);
+        logger.info(`Finished executing job: ${this.uuid}`);
 
         return {stdout: stdout, stderr: stderr};
     }
@@ -128,7 +138,10 @@ export class RemoteJob {
         if (this.container === null) {
             throw new Error('Container was never set!');
         }
+
+        this.state = JobState.CLEANING;
         
+        logger.info(`Cleanup has begun for job: ${this.uuid}`);
 
         await this.cleanupFiles();
 
@@ -142,6 +155,8 @@ export class RemoteJob {
     async cleanupFiles() {
         logger.info(`Cleaning up files for job ${this.uuid}`)
 
+        this.state = JobState.CLEANING_FILES;
+
         if (!fs.existsSync(this.dir + this.uuid)) return;
         
         await fs.promises.rmdir(this.dir + this.uuid, { recursive: true });
@@ -152,6 +167,8 @@ export class RemoteJob {
             throw new Error("Cannot clean up image when there is no image id set");
         }
         
+        this.state = JobState.CLEANING_IMAGE;
+
         logger.info(`Cleaning image: ${this.imageId} for job ${this.uuid}`);
 
         const image = await docker.getImage(this.imageId);
@@ -163,6 +180,8 @@ export class RemoteJob {
         if (this.container === null || this.container === undefined){
             throw new Error('No container present to clean up!');
         }
+
+        this.state = JobState.CLEANING_CONTAINER;
 
         logger.info(`Cleaning up container: ${this.container.id}`);
 

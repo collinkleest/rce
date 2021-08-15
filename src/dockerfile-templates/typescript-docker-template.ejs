@@ -1,6 +1,0 @@
-FROM <%= imageTag %>
-WORKDIR /app
-RUN npm install typescript -g
-COPY . .
-RUN tsc <%= fileNameTitle %>.ts
-CMD [ "node", "<%= fileNameTitle %>.js" ]

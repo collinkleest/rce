@@ -1,52 +1,57 @@
-interface DockerData {
-    imageTag: string;
-    cmd: string;
-    mountPoint?: string;
-}
-
 export const DockerLangData : any = {
-    python: { 
+    python: {
         imageTag: "python:3-alpine",
-        cmd: "python3",
-        mountPath: "/usr/src"
+        runCommands: (fileName: string, fileNameTitle?: string) =>  [`python3 /usr/src/${fileName}`],
+        mountPath: "/usr/src",
     },
     python3: {
         imageTag: "python:3-alpine",
-        cmd: "python3",
+        runCommands: (fileName: string, fileNameTitle?: string) => [`python3 /usr/src/${fileName}`],
         mountPath: "/usr/src",
     },
     python2: {
         imageTag: "python:2-alpine",
-        cmd: "python",
+        runCommands: (fileName: string, fileNameTitle?: string) => [`python /usr/src/${fileName}`],
         mountPath: "/usr/src"
     },
     java: {
         imageTag: "openjdk:11-jdk-slim",
-        cmd: "java",
-        mountPath: "/var/www/java"
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return [`javac /var/www/java/${fileName}`, `cd /var/www/java/`, `java ${fileNameTitle}`];
+        },
+        mountPath: "/var/www/java",
     },
     java11:{
         imageTag: "openjdk:11-jdk-slim",
-        cmd: "java",
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return [`javac /var/www/java/${fileName}`, `cd /var/www/java/`, `java ${fileNameTitle}`];
+        },
         mountPath: "/var/www/java"
     },
     java8:{
         imageTag: "openjdk:8-jdk-alpine",
-        cmd: "java",
-        mountPath: "/var/www/java"
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return [`javac /var/www/java/${fileName}`, `cd /var/www/java/`, `java ${fileNameTitle}`];
+        },
+        mountPath: "/var/www/java",
     },
     javascript:{
         imageTag: "node:alpine",
-        cmd: "node",
+        runCommands: (fileName: string, fileNameTitle?: string) => {
+            return [`node /app/${fileName}`]
+        },
         mountPath: "/app"
     },
     typescript: {
         imageTag: "node:alpine",
-        cmd: "node",
-        mountPath: "/app"
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return ["npm install -g typescript &>/dev/null", `tsc /app/${fileName}`, `node /app/${fileNameTitle}.js`]
+        },
+        mountPath: "/app",
     },
     go:{ 
         imageTag: "golang:alpine",
-        cmd: "go"
+        runCommands: (fileName: string, fileNameTitle?: string) => [`go run /go/src/${fileName}`],
+        mountPath: "/go/src"
     }
 }

@@ -21,13 +21,14 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
     }
     
     const fileName = getFileNameFromLang(submission.lang);
+    const fileNameTitle = fileName.split('.').slice(0, -1).join('.');
 
-    const remoteJobParams : RemoteJobParams = {
+    const remoteJobParams : RemoteJobParams = { 
         language: submission.lang,
         code: submission.code,
         filename: fileName,
         image: DockerLangData[submission.lang].imageTag,
-        cmd: DockerLangData[submission.lang].cmd,
+        runCommands: DockerLangData[submission.lang].runCommands(fileName, fileNameTitle),
         mountPath: DockerLangData[submission.lang].mountPath
     }
 

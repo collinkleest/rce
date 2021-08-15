@@ -41,13 +41,15 @@ executeRoutes.post('/', async (req, res) => {
         })
     }
 
+    const fileNameTitle = filename.split('.').slice(0, -1).join('.');
+
     const remoteJobParams : RemoteJobParams = {
         language: language.trim(),
         code: code,
         filename: filename,
         image: DockerLangData[language].imageTag,
-        cmd: DockerLangData[language].cmd,
-        mountPath: DockerLangData[language].mountPath
+        runCommands: DockerLangData[language].runCommands(filename, fileNameTitle),
+        mountPath: DockerLangData[language].mountPath,
     }
 
     const remoteJob : RemoteJob = new RemoteJob(remoteJobParams)
@@ -65,7 +67,7 @@ executeRoutes.post('/', async (req, res) => {
             stderr: remoteOutput.stderr.toString()
         }
     }
-
+    
     res.status(200).send(output as RemoteOutputResponse);
 })
 

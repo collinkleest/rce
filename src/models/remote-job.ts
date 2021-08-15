@@ -3,6 +3,6 @@ export interface RemoteJobParams {
     code: string;
     filename: string;
     image: string;
-    cmd: string;
+    runCommands: string[];
     mountPath: string;
 }

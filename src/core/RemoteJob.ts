@@ -25,18 +25,18 @@ export class RemoteJob {
     dir: string;
     state: JobState;
     image: string;
-    cmd: string;
+    runCommands: string[];
     mountPath: string;
     container : Container;
 
-    constructor({language, code, filename, image, cmd, mountPath} : RemoteJobParams) {
+    constructor({language, code, filename, image, runCommands, mountPath} : RemoteJobParams) {
         this.uuid = uuidv4();
         this.code = code;
         this.language = language;
         this.filename = filename;
         this.dir = '/tmp/rce/';
         this.image = image;
-        this.cmd = cmd;
+        this.runCommands = runCommands;
         this.mountPath = mountPath;
         this.container = new Container(null, '');
         this.state = JobState.READY;
@@ -54,14 +54,25 @@ export class RemoteJob {
         }
 
         await fs.promises.mkdir(this.dir + this.uuid, {recursive: true});
+        
         await fs.promises.writeFile(`${this.dir}${this.uuid}/${this.filename}`, this.code);
+        await fs.promises.chmod(`${this.dir}${this.uuid}/${this.filename}`, '755');
 
+        await fs.promises.writeFile(`${this.dir}${this.uuid}/entrypoint.sh`, this.getEntrypointStr());
+        await fs.promises.chmod(`${this.dir}${this.uuid}/entrypoint.sh`, '755');
 
         this.state = JobState.SETUP;
         logger.info(`Successfully set up job with uuid: ${this.uuid}`)
     }
 
-
+    getEntrypointStr(): string{
+        let entrypointContents = '#!/bin/bash\n';
+        this.runCommands.forEach((cmd) => {
+            entrypointContents += `${cmd}\n`;
+        })
+        return entrypointContents;
+    }
+    
     async execute(){
         if (this.state !== JobState.SETUP){
             throw new Error('Job has not been setup yet!');
@@ -70,19 +81,20 @@ export class RemoteJob {
         this.state = JobState.EXECUTING;
 
         logger.info(`Executing job: ${this.uuid}`);
-
+        
+        
         const stdout = new streams.WritableStream();
         const stderr = new streams.WritableStream();
         const runData = await docker.run(
             this.image, 
-            [this.cmd, `${this.mountPath}/${this.filename}`], 
+            ['sh', `${this.mountPath}/entrypoint.sh`],
             [stdout, stderr], 
             {
                 name: this.uuid,
                 Tty: false,
                 HostConfig: {
                     Binds: [`${this.dir}${this.uuid}/:${this.mountPath}`]
-                }
+                },
             } as ContainerCreateOptions
         );
         this.container = runData[1];

@@ -119,6 +119,12 @@ const App : React.FC = () => {
                   }}>
                   Java11
                 </Dropdown.Item>
+                <Dropdown.Item onClick={() => {
+                    setEditorLanguage("go");
+                    setBackendLanguage("go");
+                  }}>
+                  Go
+                </Dropdown.Item>
               </Dropdown.Menu>
 
             </Dropdown>

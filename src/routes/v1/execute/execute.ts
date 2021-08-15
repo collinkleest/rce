@@ -2,7 +2,8 @@ import express from 'express';
 import { RemoteJob } from '../../../core/RemoteJob';
 import { RemoteJobParams } from '../../../models/remote-job';
 import Logger from 'js-logger';
-import { ImageBuildFailureResponse, RemoteOutputResponse } from '../../../models/resposnes/execute-responses'; 
+import { RemoteOutputResponse } from '../../../models/resposnes/execute-responses';
+import { DockerLangData } from '../../../data/docker-lang-data'; 
 import { ExecuteRequestBody } from '../../../models/requests/execute-request';
 
 const logger = Logger.get('ExecuteRoute');
@@ -34,33 +35,26 @@ executeRoutes.post('/', async (req, res) => {
         })
     }
 
+    if (DockerLangData[language] === undefined){
+        return res.status(400).send({
+            message: `${language} is not a supported language`
+        })
+    }
+
+    const fileNameTitle = filename.split('.').slice(0, -1).join('.');
+
     const remoteJobParams : RemoteJobParams = {
         language: language.trim(),
         code: code,
-        filename: filename
+        filename: filename,
+        image: DockerLangData[language].imageTag,
+        runCommands: DockerLangData[language].runCommands(filename, fileNameTitle),
+        mountPath: DockerLangData[language].mountPath,
     }
 
     const remoteJob : RemoteJob = new RemoteJob(remoteJobParams)
 
     await remoteJob.setup();
-
-    const buildImgData : any = await remoteJob.buildImage();
-    if (buildImgData) {
-        const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
-        const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
-        if (auxObjectFound && !errorFound) {
-            remoteJob.imageId = auxObjectFound['aux']['ID'];
-        } else {
-            logger.error(`Build image was unsuccessful`);
-            await remoteJob.cleanupFiles();
-            res.status(500).send({
-                message: 'The image was unable to build',
-                error: errorFound.error,
-                imageStream: buildImgData,
-            } as ImageBuildFailureResponse)
-            throw new Error('Image build was unsuccessful');
-        }
-    }
 
     const remoteOutput = await remoteJob.execute();
 
@@ -73,7 +67,7 @@ executeRoutes.post('/', async (req, res) => {
             stderr: remoteOutput.stderr.toString()
         }
     }
-
+    
     res.status(200).send(output as RemoteOutputResponse);
 })
 

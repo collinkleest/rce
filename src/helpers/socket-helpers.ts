@@ -2,6 +2,7 @@ import Logger from 'js-logger';
 import { Server } from 'socket.io';
 import { RemoteJob } from '../core/RemoteJob';
 import { RemoteJobParams } from '../models/remote-job';
+import { DockerLangData } from '../data/docker-lang-data'; 
 import { Submission } from '../models/submission';
 const logger = Logger.get('SockerHelpers');
 
@@ -20,31 +21,20 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
     }
     
     const fileName = getFileNameFromLang(submission.lang);
+    const fileNameTitle = fileName.split('.').slice(0, -1).join('.');
 
-    const remoteJobParams : RemoteJobParams = {
+    const remoteJobParams : RemoteJobParams = { 
         language: submission.lang,
         code: submission.code,
-        filename: fileName
+        filename: fileName,
+        image: DockerLangData[submission.lang].imageTag,
+        runCommands: DockerLangData[submission.lang].runCommands(fileName, fileNameTitle),
+        mountPath: DockerLangData[submission.lang].mountPath
     }
 
     const remoteJob : RemoteJob = new RemoteJob(remoteJobParams);
 
     await remoteJob.setup();
-
-    const buildImgData : any = await remoteJob.buildImage(ioServer, submission.roomId);
-    if (buildImgData) {
-        const errorFound = buildImgData.find((val: any) => val.hasOwnProperty("error") || val.hasOwnProperty("errorDetail"));
-        const auxObjectFound = buildImgData.find((val : any) => val.hasOwnProperty("aux"))
-        if (auxObjectFound && !errorFound) {
-            remoteJob.imageId = auxObjectFound['aux']['ID'];
-        } else {
-            logger.error(`Build image was unsuccessful`);
-            await remoteJob.cleanupFiles();
-            ioServer.to(submission.roomId).emit('code-output', errorFound.error);
-            throw new Error('Image build was unsuccessful');
-        }
-        remoteJob.imageId = auxObjectFound['aux']['ID'];
-    }
 
     const remoteOutput = await remoteJob.execute();
         

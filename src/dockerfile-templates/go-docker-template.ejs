@@ -1,6 +1,0 @@
-FROM <%= imageTag %>
-RUN mkdir /app
-ADD . /app
-WORKDIR /app
-RUN go build <%= fileName %> .
-CMD ["/app/<%= fileNameTitle %>"]

@@ -1,13 +1,10 @@
 export enum JobState {
     READY,
     SETUP,
-    BUILDING,
-    BUILT,
     EXECUTING,
     EXECUTED,
     CLEANING,
     CLEANING_FILES,
-    CLEANING_IMAGE,
     CLEANING_CONTAINER,
     CLEANED
 }

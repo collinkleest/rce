@@ -1,10 +1,15 @@
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
+import Logger from 'js-logger';
+
 import { Submission } from './src/models/submission';
 import { apiRouter } from './src/routes';
-
 import { codeSubmission } from './src/helpers/socket-helpers';
+import { prePullImages } from './src/helpers/setup';
+
+const logger = Logger.get('Main');
+Logger.useDefaults();
 
 const app  = express();
 const server = http.createServer(app);
@@ -43,3 +48,8 @@ server.listen(3000, () => {
     console.log('listening on *.*.*.*:3000');
 });
 
+try {
+    prePullImages();
+} catch(err) {
+    logger.error(`Unable to pull images: ${err}`)
+}

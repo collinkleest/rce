@@ -16,12 +16,14 @@ export const Console: React.FC<ConsoleProps> = (props: ConsoleProps) => {
                     if (stline !== "" && stline !== null && stline !== undefined){
                         return (<div><code key={index}>{'>'} {stline}</code></div>);
                     }
+                    return null;
                 })}
                 <h6>Standard Error Output (stderr):</h6>
                 {props.stderr.split('\n').map((stline, index) => {
                     if (stline !== "" && stline !== null && stline !== undefined){
                         return (<div><code key={index}>{'>'} {stline}</code></div>);
                     }
+                    return null;
                 })}
             </Card.Body>
         </Card>

@@ -1,11 +1,13 @@
 import { Button, Card, Dropdown } from "react-bootstrap";
-import { default as MonacoEditor } from '@monaco-editor/react';
+import { default as MonacoEditor, Monaco } from '@monaco-editor/react';
 import { useEffect, useState } from "react";
 
 
 import { LangDropdowns } from "../../data/lang-dropdowns";
 import { LangDropdownItem } from './LangDropdownItem'; 
 import { langSnippets } from '../../data/lang-snippets';
+import { Themes } from './Themes/Themes';
+
 
 interface EditorProps {
     changeFunc: (value: string, event: Event) => void;
@@ -29,6 +31,12 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
             setEditorCode(props.remoteCode);
         }
     }, [props.remoteCode])
+
+    const handleEditorMounted = (editor, monaco: Monaco) => {
+        Themes.forEach((theme) => {
+            monaco.editor.defineTheme(theme.themeName, theme.themeConfig);
+        })
+    }
 
     return (
         <Card>
@@ -67,6 +75,16 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
                         >
                             Light
                         </Dropdown.Item>
+                        {Themes.map((theme) => {
+                            return (
+                                <Dropdown.Item
+                                    key={theme.themeName}
+                                    onClick={() => setEditorTheme(theme.themeName)}
+                                >
+                                    {theme.themeTitle}
+                                </Dropdown.Item>
+                            )
+                        })}
                     </Dropdown.Menu>
                 </Dropdown>
             </Card.Header>
@@ -79,6 +97,7 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
                     language={monacoLang}
                     value={editorCode}
                     onChange={props.changeFunc}
+                    onMount={handleEditorMounted}
                     theme={editorTheme}
                 />
             </Card.Body>

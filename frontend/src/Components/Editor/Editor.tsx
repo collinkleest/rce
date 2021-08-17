@@ -7,8 +7,14 @@ import { LangDropdowns } from "../../data/lang-dropdowns";
 import { LangDropdownItem } from './LangDropdownItem'; 
 import { langSnippets } from '../../data/lang-snippets';
 
-export const Editor : React.FC = () => {
+interface EditorProps {
+    changeFunc: (value: string, event: Event) => void;
+    remoteCode: string;
+}
 
+export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
+
+    const [ editorTheme, setEditorTheme ] = useState('vs-dark');
     const [ monacoLang, setMonacoLang ] = useState('javascript');
     const [ backendLang, setBackendLang ] = useState('javascript');
     const [ editorCode, setEditorCode ] = useState('');
@@ -16,6 +22,12 @@ export const Editor : React.FC = () => {
     useEffect(() => {
         setEditorCode(langSnippets[backendLang]);
     }, [backendLang])
+
+    useEffect(() => {
+        if (props.remoteCode !== null){
+            setEditorCode(props.remoteCode);
+        }
+    }, [props.remoteCode])
 
     return (
         <Card>
@@ -44,10 +56,14 @@ export const Editor : React.FC = () => {
                         Theme
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                        <Dropdown.Item>
+                        <Dropdown.Item 
+                            onClick={() => setEditorTheme('vs-dark')}
+                        >
                             Dark
                         </Dropdown.Item>
-                        <Dropdown.Item>
+                        <Dropdown.Item 
+                            onClick={() => setEditorTheme('light')}
+                        >
                             Light
                         </Dropdown.Item>
                     </Dropdown.Menu>
@@ -61,7 +77,8 @@ export const Editor : React.FC = () => {
                     defaultLanguage="javascript"
                     language={monacoLang}
                     value={editorCode}
-                    theme="vs-dark"
+                    onChange={props.changeFunc}
+                    theme={editorTheme}
                 />
             </Card.Body>
 

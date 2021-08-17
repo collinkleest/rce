@@ -1,10 +1,10 @@
-import { Button, Card, Dropdown } from "react-bootstrap";
+import { Button, Card, Dropdown, Spinner } from "react-bootstrap";
 import { default as MonacoEditor, Monaco } from '@monaco-editor/react';
 import { useEffect, useState } from "react";
 
 
 import { LangDropdowns } from "../../data/lang-dropdowns";
-import { LangDropdownItem } from './LangDropdownItem'; 
+import { LangDropdownItem, changeActive } from './LangDropdownItem'; 
 import { langSnippets } from '../../data/lang-snippets';
 import { Themes } from './Themes/Themes';
 
@@ -12,6 +12,7 @@ import { Themes } from './Themes/Themes';
 interface EditorProps {
     changeFunc: (value: string, event: Event) => void;
     runCodeFunc: (code: string, lang: string) => void;
+    setLoadingFunc: () => void;
     remoteCode: string;
 }
 
@@ -66,12 +67,19 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Item 
-                            onClick={() => setEditorTheme('vs-dark')}
+                            onClick={(evt) => {
+                                changeActive(evt);
+                                setEditorTheme('vs-dark');
+                            }}
+                            className="active"
                         >
                             Dark
                         </Dropdown.Item>
                         <Dropdown.Item 
-                            onClick={() => setEditorTheme('light')}
+                            onClick={(evt) => {
+                                changeActive(evt);
+                                setEditorTheme('light')}
+                            }
                         >
                             Light
                         </Dropdown.Item>
@@ -79,7 +87,10 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
                             return (
                                 <Dropdown.Item
                                     key={theme.themeName}
-                                    onClick={() => setEditorTheme(theme.themeName)}
+                                    onClick={(evt) => {
+                                        changeActive(evt);
+                                        setEditorTheme(theme.themeName)}
+                                    }
                                 >
                                     {theme.themeTitle}
                                 </Dropdown.Item>
@@ -103,7 +114,15 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
             </Card.Body>
 
             <Card.Footer>
-                <Button onClick={() => props.runCodeFunc(editorCode, backendLang)} variant="success">Run Code</Button>
+                <Button 
+                    onClick={() => {
+                        props.runCodeFunc(editorCode, backendLang);
+                        props.setLoadingFunc();
+                    }} 
+                    variant="success"
+                >
+                    Run Code
+                </Button>
             </Card.Footer>
         </Card>
     );

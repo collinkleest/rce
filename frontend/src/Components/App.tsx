@@ -13,7 +13,7 @@ const App : React.FC = () => {
   const [ roomId, setRoomId ] = useState("");
   const [ remoteCode, setRemoteCode ] = useState(null);
   const [ remoteCodeOutput, setRemoteCodeOutput ] = useState({stdout: '', stderr: ''});
-
+  const [ loading, setLoading ] = useState(false);
 
   useEffect(() => {
     socket = io();
@@ -31,6 +31,10 @@ const App : React.FC = () => {
     })
 
   }, [])
+
+  useEffect(() => {
+    setLoading(false);
+  }, [remoteCodeOutput])
 
   const broadcastChanges = (value : string | undefined, event: Event) => {
     socket.emit('new-code', value, roomId);
@@ -58,6 +62,7 @@ const App : React.FC = () => {
             remoteCode={remoteCode}
             changeFunc={broadcastChanges}
             runCodeFunc={runCodeHandler}
+            setLoadingFunc={() => setLoading(true)}
           />
         </Col>
         
@@ -65,6 +70,7 @@ const App : React.FC = () => {
           <Console
             stdout={remoteCodeOutput.stdout}
             stderr={remoteCodeOutput.stderr}
+            loading={loading}
           />
         </Col>
       </Row>

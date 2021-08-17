@@ -1,8 +1,8 @@
 import Editor from '@monaco-editor/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Nav } from './Nav/Nav';
 import './App.css';
-import { Col, Container, Dropdown, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Dropdown, Row } from 'react-bootstrap';
 import io, { Socket } from 'socket.io-client';
 import { Submission } from '../../../src/models/submission'; 
 import { langSnippets } from '../data/lang-snippets'
@@ -15,7 +15,6 @@ const App : React.FC = () => {
   const [ editorLanguage, setEditorLanguage ] = useState("javascript");
   const [ editorCode, setEditorCode ] = useState("");
   const [ backendLanguage, setBackendLanguage ] = useState("javascript");
-  const editorRef = useRef(null);
 
 
   useEffect(() => {
@@ -60,17 +59,8 @@ const App : React.FC = () => {
     socket.emit('code-submission', JSON.stringify(submission));
   }
 
-  const handleEditorDidMount = (editor, monaco) => {
-    editorRef.current = editor;
-  }
-
-  function showValue() {
-    console.log(editorRef.current.getPosition()); 
-  }
-
   return (
     <div>
-      <button onClick={showValue}>Click</button>
       <Nav 
         roomId={roomId}
         roomJoinHandler={roomJoinHandler}
@@ -150,28 +140,42 @@ const App : React.FC = () => {
       <Container fluid>
         <Row className="editor-main">
           <Col xs={6}>
-            <Editor
-              height="100%"
-              width="100%"
-              defaultLanguage="javascript"
-              language={editorLanguage}
-              onChange={editorValueChange}
-              onMount={handleEditorDidMount}
-              value={editorCode}
-              theme={editorTheme}
-            />
+            <Card>
+              <Card.Header>
+                <Dropdown>
+                  <Dropdown.Toggle>
+                    Lang
+                  </Dropdown.Toggle>
+                  <Dropdown.Item>
+
+                  </Dropdown.Item>
+                </Dropdown>
+              </Card.Header>
+              <Card.Body className="p-0">
+                <Editor
+                  height="900px"
+                  width="100%"
+                  defaultLanguage="javascript"
+                  language={editorLanguage}
+                  onChange={editorValueChange}
+                  value={editorCode}
+                  theme={editorTheme}
+                />
+              </Card.Body>
+              <Card.Footer>
+                <div className="ms-auto">
+                  <Button variant="success">Run Code</Button>
+                </div>
+              </Card.Footer>
+            </Card>
           </Col>
           <Col xs={6}>
-            <h1>
-              Build Progress
-            </h1>
-            <div id="buildOutput" className="">
-
-            </div>
-
-            <h1>
-              Code Output
-            </h1>
+            <Card>
+              <Card.Header>Console Output</Card.Header>
+              <Card.Body>
+                <Card.Title>Standard Output (stdout)</Card.Title>
+              </Card.Body>
+            </Card>
             <div id="codeOutput" className="">
 
             </div>

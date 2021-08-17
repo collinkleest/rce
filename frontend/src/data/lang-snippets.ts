@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const langSnippets : object = {
     "javascript": "let i = 10;\n\nfunction power(num) {\n  num = num * num;\n  console.log(num);\n}\n\npower(i);",
     "typescript": "let i : number = 10;\n\nfunction power(num: number) : void {\n  num = num * num;\n  console.log(num);\n}\n\power(i);",

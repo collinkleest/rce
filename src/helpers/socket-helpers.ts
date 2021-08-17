@@ -40,7 +40,10 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
         
     await remoteJob.cleanup();
 
-    ioServer.to(submission.roomId).emit('code-output', remoteOutput.stdout.toString());
+    ioServer.to(submission.roomId).emit('code-output', JSON.stringify({
+        stdout: remoteOutput.stdout.toString(),
+        stderr: remoteOutput.stderr.toString(),
+    }));
 }
 
 const getFileNameFromLang = (lang: string) : string => {

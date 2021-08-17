@@ -4,12 +4,15 @@ import io, { Socket } from 'socket.io-client';
 
 import { Submission } from '../../../src/models/submission'; 
 import { Editor as CustomEditor} from './Editor/Editor';
+import { Console } from './Console/Console';
+import { Col, Row } from 'react-bootstrap';
 
 let socket: Socket;
 
 const App : React.FC = () => {
   const [ roomId, setRoomId ] = useState("");
   const [ remoteCode, setRemoteCode ] = useState(null);
+  const [ remoteCodeOutput, setRemoteCodeOutput ] = useState({stdout: '', stderr: ''});
 
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const App : React.FC = () => {
     })
 
     socket.on('code-output', (codeOutput: string) => {
-      document.querySelector("#codeOutput").innerHTML = codeOutput;
+      setRemoteCodeOutput(JSON.parse(codeOutput));
     })
 
   }, [])
@@ -38,7 +41,7 @@ const App : React.FC = () => {
     socket.emit('join-room', room);
   }
 
-  const runCodeHandler = (code, lang) => {
+  const runCodeHandler = (code: string, lang: string) => {
     const submission : Submission = { code: code, lang: lang, roomId: roomId };
     socket.emit('code-submission', JSON.stringify(submission));
   }
@@ -49,10 +52,23 @@ const App : React.FC = () => {
         roomId={roomId}
         roomJoinHandler={roomJoinHandler}
       />
-      <CustomEditor
-        remoteCode={remoteCode}
-        changeFunc={broadcastChanges}
-      />
+      <Row className="mx-1 my-1">
+        <Col xl={8} lg={7} md={6} sm={6}>
+          <CustomEditor
+            remoteCode={remoteCode}
+            changeFunc={broadcastChanges}
+            runCodeFunc={runCodeHandler}
+          />
+        </Col>
+        
+        <Col xl={4} lg={5} md={6} sm={6}>
+          <Console
+            stdout={remoteCodeOutput.stdout}
+            stderr={remoteCodeOutput.stderr}
+          />
+        </Col>
+      </Row>
+      
     </div>  
   );
 }

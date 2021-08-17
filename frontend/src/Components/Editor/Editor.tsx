@@ -9,6 +9,7 @@ import { langSnippets } from '../../data/lang-snippets';
 
 interface EditorProps {
     changeFunc: (value: string, event: Event) => void;
+    runCodeFunc: (code: string, lang: string) => void;
     remoteCode: string;
 }
 
@@ -83,7 +84,7 @@ export const Editor : React.FC<EditorProps> = (props: EditorProps) => {
             </Card.Body>
 
             <Card.Footer>
-                <Button variant="success">Run Code</Button>
+                <Button onClick={() => props.runCodeFunc(editorCode, backendLang)} variant="success">Run Code</Button>
             </Card.Footer>
         </Card>
     );

@@ -27,7 +27,7 @@ export const LangDropdowns = [
     {
         editorLang: "java",
         backendLang: "java11",
-        title: "Java"
+        title: "Java11"
     },
     {
         editorLang: "go",

@@ -28,6 +28,12 @@ cd frontend/
 yarn run watch
 ```
 
+### Environment Variables
+```
+DOCKER_SOCK=<socket to docker daemon | default is /run/docker.sock>
+DOCKER_TIMEOUT=<time in ms for dockerode to timeout | default is 5000>
+SERVER_PORT=<port for server to run | default is 3000>
+```
 
 ## Endpoints
 ```bash

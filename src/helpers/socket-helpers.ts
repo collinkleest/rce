@@ -34,7 +34,12 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
 
     const remoteJob : RemoteJob = new RemoteJob(remoteJobParams);
 
-    await remoteJob.setup();
+    try {
+        await remoteJob.setup();
+    } catch (err){
+        logger.error(err);
+        return;
+    }
 
     const remoteOutput = await remoteJob.execute();
         
@@ -56,6 +61,8 @@ const getFileNameFromLang = (lang: string) : string => {
         fileName = 'Main.ts';
     } else if (lang === 'java' || lang === 'java8' || lang === 'java11'){
         fileName = 'Main.java';
+    } else if (lang === 'go'){
+        fileName = 'Main.go';
     }
     return fileName;
 }

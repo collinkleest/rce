@@ -19,7 +19,7 @@ app.use('/', express.static(__dirname + '/frontend/build/'));
 app.use(express.json());
 
 ioServer.on('connection', (socket: Socket) => {
-    console.log(`${socket.id} has connected`);
+    logger.info(`${socket.id} has connected`);
 
     socket.join(socket.id);
 
@@ -32,7 +32,7 @@ ioServer.on('connection', (socket: Socket) => {
     })
 
     socket.on('disconnect', () => {
-        console.log(` ${socket.id} has disconnected`);
+        logger.info(`${socket.id} has disconnected`);
     })
     
     socket.on('code-submission', (submission: string) => {
@@ -44,8 +44,10 @@ ioServer.on('connection', (socket: Socket) => {
 
 app.use('/api', apiRouter);
 
-server.listen(3000, () => {
-    console.log('listening on *.*.*.*:3000');
+const SERVER_PORT = process.env.SERVER_PORT || 3000; 
+
+server.listen(SERVER_PORT, () => {
+    logger.info(`Server is Listening at *.*.*.*:${SERVER_PORT}`)
 });
 
 try {

@@ -7,6 +7,8 @@ import io, { Socket } from 'socket.io-client';
 import { Submission } from '../../../src/models/submission'; 
 import { langSnippets } from '../data/lang-snippets'
 
+import { Editor as CustomEditor} from './Editor/Editor';
+
 let socket: Socket;
 
 const App : React.FC = () => {
@@ -65,6 +67,7 @@ const App : React.FC = () => {
         roomId={roomId}
         roomJoinHandler={roomJoinHandler}
       />
+      <CustomEditor></CustomEditor>
       <Container fluid>
         <Row>
           <Col xs={1}>

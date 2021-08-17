@@ -1,10 +1,21 @@
-import { Card, Dropdown } from "react-bootstrap";
+import { Button, Card, Dropdown } from "react-bootstrap";
+import { default as MonacoEditor } from '@monaco-editor/react';
+import { useEffect, useState } from "react";
 
 
 import { LangDropdowns } from "../../data/lang-dropdowns";
 import { LangDropdownItem } from './LangDropdownItem'; 
+import { langSnippets } from '../../data/lang-snippets';
 
 export const Editor : React.FC = () => {
+
+    const [ monacoLang, setMonacoLang ] = useState('javascript');
+    const [ backendLang, setBackendLang ] = useState('javascript');
+    const [ editorCode, setEditorCode ] = useState('');
+
+    useEffect(() => {
+        setEditorCode(langSnippets[backendLang]);
+    }, [backendLang])
 
     return (
         <Card>
@@ -16,10 +27,13 @@ export const Editor : React.FC = () => {
                     <Dropdown.Menu>
                         {LangDropdowns.map(({editorLang, backendLang, title}) => {
                             return (
-                                <LangDropdownItem 
+                                <LangDropdownItem
+                                    key={backendLang} 
                                     title={title}
                                     backendLang={backendLang}
                                     editorLang={editorLang}
+                                    setMonacoLang={(lang) => setMonacoLang(lang)}
+                                    setBackendLang={(lang) => setBackendLang(lang)}
                                 />
                             );
                         })}
@@ -40,12 +54,19 @@ export const Editor : React.FC = () => {
                 </Dropdown>
             </Card.Header>
             
-            <Card.Body>
-
+            <Card.Body className="p-0">
+                <MonacoEditor
+                    height="900px"
+                    width="100%"
+                    defaultLanguage="javascript"
+                    language={monacoLang}
+                    value={editorCode}
+                    theme="vs-dark"
+                />
             </Card.Body>
 
             <Card.Footer>
-
+                <Button variant="success">Run Code</Button>
             </Card.Footer>
         </Card>
     );

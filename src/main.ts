@@ -3,6 +3,8 @@ import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import Logger from 'js-logger';
+import path from 'path';
+
 
 import { Submission } from './models/submission';
 import { apiRouter } from './routes';
@@ -16,7 +18,8 @@ const app  = express();
 const server = http.createServer(app);
 const ioServer : Server = new Server(server);
 
-app.use('/', express.static(__dirname + '/frontend/build/'));
+
+app.use('/', express.static(path.join(__dirname + '/../frontend/build/')));
 app.use(express.json());
 
 ioServer.on('connection', (socket: Socket) => {

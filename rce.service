@@ -1,0 +1,15 @@
+[Unit]
+Description=RCE
+
+[Service]
+ExecStart=/home/ubuntu/rce/build/main.js
+Restart=always
+User=nogroup
+# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
+Group=nogroup
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=SERVER_PORT=80
+WorkingDirectory=/home/ubuntu/rce/build/
+
+[Install]
+WantedBy=multi-user.target

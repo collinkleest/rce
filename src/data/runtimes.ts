@@ -31,5 +31,15 @@ export const runtimes : Runtime[] = [
         language: "go",
         dockerImage: DockerLangData["go"].imageTag, 
         aliases: ['golang']
-    }
+    },
+    {
+        language: "c",
+        dockerImage: DockerLangData["c"].imageTag, 
+        aliases: ['obj-c', 'objective-c']
+    },
+    {
+        language: "c++",
+        dockerImage: DockerLangData["c++"].imageTag, 
+        aliases: ['cpp']
+    },
 ];

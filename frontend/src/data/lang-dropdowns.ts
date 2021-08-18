@@ -39,4 +39,9 @@ export const LangDropdowns = [
         backendLang: "c",
         title: "C"
     },
+    {
+        editorLang: "cpp",
+        backendLang: "c++",
+        title: "C++"
+    }
 ];

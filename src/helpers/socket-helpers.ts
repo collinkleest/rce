@@ -53,20 +53,31 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
 
 const getFileNameFromLang = (lang: string) : string => {
     let fileName = '';
-    if (lang === 'python' || lang === 'python3' || lang === 'python2'){
-        fileName = 'Main.py';
-    } else if (lang === 'javascript'){
-        fileName = 'Main.js';
-    } else if (lang === 'typescript') {
-        fileName = 'Main.ts';
-    } else if (lang === 'java' || lang === 'java8' || lang === 'java11'){
-        fileName = 'Main.java';
-    } else if (lang === 'go'){
-        fileName = 'Main.go';
-    } else if (lang === 'c'){
-        fileName = 'Main.c';
+    switch (lang) {
+        case 'python': case 'python3': case 'python2':
+            fileName = 'Main.py';
+            break;
+        case 'javascript':
+            fileName = 'Main.js';
+            break;
+        case 'typescript':
+            fileName = 'Main.ts';
+            break;
+        case 'java': case 'java8': case 'java11':
+            fileName = 'Main.java';
+            break;
+        case 'go':
+            fileName = 'Main.go';
+            break;
+        case 'c':
+            fileName = 'Main.c';
+            break;
+        case 'c++':
+            fileName = 'Main.cpp';
+            break;
     }
     return fileName;
 }
 
-export { codeSubmission };
+
+export { codeSubmission, getFileNameFromLang };

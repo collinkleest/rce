@@ -63,5 +63,15 @@ export const DockerLangData : any = {
             ]
         },
         mountPath: "/usr/src/"
+    },
+    'c++': {
+        imageTag: "gcc:latest",
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return [
+                `g++ /usr/src/${fileName} -o /usr/src/${fileNameTitle}`,
+                `./usr/src/${fileNameTitle}`
+            ]
+        },
+        mountPath: "/usr/src/"
     }
 }

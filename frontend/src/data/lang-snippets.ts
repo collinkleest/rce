@@ -8,5 +8,6 @@ export const langSnippets : object = {
     "java8":"public class Main { \n\n   public static void main(String[] args) {\n      System.out.println(\"Hello World\");\n    }\n\n}",
     "java11":"public class Main { \n\n   public static void main(String[] args) {\n      System.out.println(\"Hello World\");\n    }\n\n}",
     "java":"public class Main { \n\n   public static void main(String[] args) {\n      System.out.println(\"Hello World\");\n    }\n\n}",
-    "go": "package main;\n\nimport \"fmt\";\n\nfunc main() {\n  fmt.Println(\"Hello World\")\n}"
+    "go": "package main;\n\nimport \"fmt\";\n\nfunc main() {\n  fmt.Println(\"Hello World\")\n}",
+    "c":"# include <stdio.h>\n\nint main() {\n\n  printf(\"Hello World!\");\n  return 0;\n\n}"
 }

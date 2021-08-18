@@ -53,5 +53,15 @@ export const DockerLangData : any = {
         imageTag: "golang:alpine",
         runCommands: (fileName: string, fileNameTitle?: string) => [`go run /go/src/${fileName}`],
         mountPath: "/go/src"
+    },
+    c: {
+        imageTag: "gcc:latest",
+        runCommands: (fileName: string, fileNameTitle: string) => {
+            return [
+                `gcc /usr/src/${fileName} -o /usr/src/${fileNameTitle}`,
+                `./usr/src/${fileNameTitle}`
+            ]
+        },
+        mountPath: "/usr/src/"
     }
 }

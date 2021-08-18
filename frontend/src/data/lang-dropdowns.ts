@@ -34,4 +34,9 @@ export const LangDropdowns = [
         backendLang: "go",
         title: "Go"
     },
+    {
+        editorLang: "objective-c",
+        backendLang: "c",
+        title: "C"
+    },
 ];

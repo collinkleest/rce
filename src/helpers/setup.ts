@@ -7,8 +7,7 @@ const logger = Logger.get('SetupHelper');
 Logger.useDefaults();
 
 const dockerConfig : DockerOptions = {
-    socketPath: process.env.DOCKER_SOCK || '/run/docker.sock',
-    timeout: Number(process.env.DOCKER_TIMEOUT) || 5000
+    socketPath: process.env.DOCKER_SOCK || '/run/docker.sock'
 }
 
 const docker : Docker = new Docker(dockerConfig);

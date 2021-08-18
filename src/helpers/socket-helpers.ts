@@ -63,6 +63,8 @@ const getFileNameFromLang = (lang: string) : string => {
         fileName = 'Main.java';
     } else if (lang === 'go'){
         fileName = 'Main.go';
+    } else if (lang === 'c'){
+        fileName = 'Main.c';
     }
     return fileName;
 }

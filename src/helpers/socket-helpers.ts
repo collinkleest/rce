@@ -40,18 +40,41 @@ const codeSubmission = async (submission : Submission, ioServer : Server) => {
     try {
         await remoteJob.setup();
     } catch (err){
+        sendErrorToRoom(submission.roomId, ioServer, err);
+        logger.error('Error in remote job setup:');
         logger.error(err);
-        return;
+        throw err;
     }
 
-    const remoteOutput = await remoteJob.execute();
-        
-    await remoteJob.cleanup();
+    try {
+        const remoteOutput = await remoteJob.execute();
+        ioServer.to(submission.roomId).emit('code-output', JSON.stringify({
+            stdout: remoteOutput.stdout.toString(),
+            stderr: remoteOutput.stderr.toString(),
+        }));
+    } catch (err) {
+        sendErrorToRoom(submission.roomId, ioServer, err);
+        logger.error('Error in remote job execution:');
+        logger.error(err);
+        throw err;
+    }
+    
+    try {
+        await remoteJob.cleanup();
+    } catch (err) {
+        sendErrorToRoom(submission.roomId, ioServer, err);
+        logger.error('Error in remote job cleanup:');
+        logger.error(err);
+        throw err;
+    }
+    
+}
 
-    ioServer.to(submission.roomId).emit('code-output', JSON.stringify({
-        stdout: remoteOutput.stdout.toString(),
-        stderr: remoteOutput.stderr.toString(),
-    }));
+const sendErrorToRoom = (roomId: string, ioServer: Server, err: Error) => {
+    ioServer.to(roomId).emit('code-output', JSON.stringify({
+        stdout: '',
+        stderr: err,
+    }));    
 }
 
 const getFileNameFromLang = (lang: string) : string => {
@@ -83,4 +106,4 @@ const getFileNameFromLang = (lang: string) : string => {
 }
 
 
-export { codeSubmission, getFileNameFromLang };
+export { codeSubmission, getFileNameFromLang, sendErrorToRoom };

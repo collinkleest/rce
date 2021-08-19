@@ -10,7 +10,10 @@ export const runtimes : Runtime[] = [
     {
         language: "python3",
         dockerImage: DockerLangData["python3"].imageTag,
-        aliases: ['py3']
+        aliases: [
+            'py3', 
+            'python'
+        ]
     },
     {
         language: "python2",
@@ -20,22 +23,31 @@ export const runtimes : Runtime[] = [
     {
         language: "javascript",
         dockerImage: DockerLangData["javascript"].imageTag,
-        aliases: ['js', 'browserscript']
+        aliases: [
+            'js', 
+            'browserscript'
+        ]
     },
     {
         language: "typescript",
         dockerImage: DockerLangData["typescript"].imageTag,
-        aliases: ['ts', 'microsoft']
+        aliases: [
+            'ts', 
+            'microsoft'
+        ]
     },
     {
         language: "go",
         dockerImage: DockerLangData["go"].imageTag, 
-        aliases: ['golang']
+        aliases: [ 'golang' ]
     },
     {
         language: "c",
         dockerImage: DockerLangData["c"].imageTag, 
-        aliases: ['obj-c', 'objective-c']
+        aliases: [
+            'obj-c', 
+            'objective-c'
+        ]
     },
     {
         language: "c++",

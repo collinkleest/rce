@@ -5,6 +5,7 @@ import { RemoteJob } from '../../../core/RemoteJob';
 import { RemoteJobParams } from '../../../models/remote-job';
 import { RemoteOutputResponse } from '../../../models/resposnes/execute-responses';
 import { DockerLangData } from '../../../data/docker-lang-data'; 
+import { runtimes } from '../../../data/runtimes';
 import { ExecuteRequestBody } from '../../../models/requests/execute-request';
 
 const logger = Logger.get('ExecuteRoute');
@@ -12,8 +13,8 @@ const executeRoutes = express.Router();
 
 executeRoutes.post('/', async (req, res) => {
     logger.info(`Request received with body of ${req.body} from ${req.ip}`);
+    let { language } = req.body as ExecuteRequestBody;
     const { 
-        language,
         filename,
         code
     } = req.body as ExecuteRequestBody;
@@ -36,12 +37,16 @@ executeRoutes.post('/', async (req, res) => {
         })
     }
 
-    if (DockerLangData[language] === undefined){
+    const langFromAlias = runtimes.find((runtime) => runtime.aliases?.includes(language))?.language;
+
+    if (DockerLangData[language] === undefined && langFromAlias === undefined){
         return res.status(400).send({
             message: `${language} is not a supported language`
         })
     }
 
+    language = langFromAlias ? langFromAlias : language;
+    
     const fileNameTitle = filename.split('.').slice(0, -1).join('.');
 
     const remoteJobParams : RemoteJobParams = {

@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "description": "Frontend for RCE",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "@monaco-editor/react": "4.2.1",

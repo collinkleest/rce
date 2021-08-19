@@ -1,11 +1,14 @@
 import Logger from 'js-logger';
 import { Server } from 'socket.io';
+
 import { RemoteJob } from '../core/RemoteJob';
 import { RemoteJobParams } from '../models/remote-job';
 import { DockerLangData } from '../data/docker-lang-data'; 
 import { Submission } from '../models/submission';
-const logger = Logger.get('SockerHelpers');
 
+
+const logger = Logger.get('SockerHelpers');
+Logger.useDefaults();
 
 const codeSubmission = async (submission : Submission, ioServer : Server) => {
     if (!submission.lang || typeof submission.lang !== 'string'){

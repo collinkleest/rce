@@ -2,10 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import Docker, { Container, DockerOptions, ContainerCreateOptions } from 'dockerode';
 import Logger from 'js-logger';
 import fs from 'fs';
-import { JobState } from '../models/job-states';
 import streams from 'memory-streams';
-import { RemoteJobParams } from '../models/remote-job';
 
+import { JobState } from '../models/job-states';
+import { RemoteJobParams } from '../models/remote-job';
 
 const logger = Logger.get('RemoteJob');
 Logger.useDefaults();

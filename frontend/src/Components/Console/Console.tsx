@@ -1,5 +1,5 @@
 import { Card, Spinner } from "react-bootstrap"
-
+import styled from 'styled-components';
 
 interface ConsoleProps {
     stdout: string;
@@ -9,6 +9,11 @@ interface ConsoleProps {
 
 export const Console: React.FC<ConsoleProps> = (props: ConsoleProps) => {
     
+    const OutputContainer = styled.div`
+        height: 20rem;
+        overflow-y: scroll;
+    `;
+
     return (
         <Card>
             <Card.Header>
@@ -24,19 +29,23 @@ export const Console: React.FC<ConsoleProps> = (props: ConsoleProps) => {
             </Card.Header>
             <Card.Body>
                 <h6>Standard Output (stdout):</h6>
-                {props.stdout.split('\n').map((stline, index) => {
-                    if (stline !== "" && stline !== null && stline !== undefined){
-                        return (<div><code key={index}>{'>'} {stline}</code></div>);
-                    }
-                    return null;
-                })}
+                <OutputContainer>
+                    {props.stdout.slice(0, 50000).split('\n').map((stline, index) => {
+                        if (stline !== "" && stline !== null && stline !== undefined){
+                            return (<div><code key={index}>{'>'} {stline}</code></div>);
+                        }
+                        return '';
+                    })}
+                </OutputContainer>
                 <h6>Standard Error Output (stderr):</h6>
-                {props.stderr.split('\n').map((stline, index) => {
-                    if (stline !== "" && stline !== null && stline !== undefined){
-                        return (<div><code key={index}>{'>'} {stline}</code></div>);
-                    }
-                    return null;
-                })}
+                <OutputContainer>
+                    {props.stderr.slice(0, 50000).split('\n').map((stline, index) => {
+                        if (stline !== "" && stline !== null && stline !== undefined){
+                            return (<div><code key={index}>{'>'} {stline}</code></div>);
+                        }
+                        return '';
+                    })}
+                </OutputContainer>
             </Card.Body>
         </Card>
     )

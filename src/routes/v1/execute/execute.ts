@@ -60,21 +60,46 @@ executeRoutes.post('/', async (req, res) => {
 
     const remoteJob : RemoteJob = new RemoteJob(remoteJobParams)
 
-    await remoteJob.setup();
+    try {
+        await remoteJob.setup();
+    } catch (err) {
+        res.status(500).send({
+            message: 'Error in remote job setup',
+            error: err
+        })
+        logger.error('Error in remote job setup:');
+        logger.error(err);
+        throw err;
+    }
 
-    const remoteOutput = await remoteJob.execute();
-
-    await remoteJob.cleanup();
-    
-    const output : RemoteOutputResponse = {
-        language: language,
-        output: {
-            stdout: remoteOutput.stdout.toString(),
-            stderr: remoteOutput.stderr.toString()
+    try {
+        const remoteOutput = await remoteJob.execute();
+        const output : RemoteOutputResponse = {
+            language: language,
+            output: {
+                stdout: remoteOutput.stdout.toString(),
+                stderr: remoteOutput.stderr.toString()
+            }
         }
+        res.status(200).send(output as RemoteOutputResponse);
+    } catch (err) {
+        res.status(500).send({
+            message: 'Error in remote code execution',
+            error: err
+        })
+        logger.error('Error in remote job execution:');
+        logger.error(err);
+        throw err;
+    }
+
+    try {
+        await remoteJob.cleanup();
+    } catch (err) {
+        logger.error('Error in remote job cleanup:');
+        logger.error(err);
+        throw err;
     }
     
-    res.status(200).send(output as RemoteOutputResponse);
 })
 
 

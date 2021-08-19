@@ -92,22 +92,3 @@ Example response
     }
 }
 ```
-Error Response
-```json
-{
-    "message": "The image was unable to build",
-    "error": "The command '/bin/sh -c javac Main.java' returned a non-zero code: 1",
-    "imageStream": [
-        {
-            "stream":"[91mMain.java:1: error: ';' expected\npublic class Main { public static void main(String[] args) { System.out.println(\"Hello World\")}}\n                                                                                              ^\n[0m"
-        },
-        {
-            "errorDetail": {
-                "code": 1,
-                "message": "The command '/bin/sh -c javac Main.java' returned a non-zero code: 1"
-            },
-            "error": "The command '/bin/sh -c javac Main.java' returned a non-zero code: 1"
-        }
-    ]
-}
-```

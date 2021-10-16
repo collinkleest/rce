@@ -1,10 +1,9 @@
-import express from 'express';
-import { runtimes } from '../../../data/runtimes';
-const runtimesRoutes = express.Router();
+import express from "express";
+import { runtimes } from "../../../data/runtimes";
+const runtimesRouter = express.Router();
 
-runtimesRoutes.get('/', (req, res) => {
-    res.status(200).send(runtimes);
-})
+runtimesRouter.get("/", (req, res) => {
+  res.status(200).send(runtimes);
+});
 
-
-export { runtimesRoutes };
+export { runtimesRouter };

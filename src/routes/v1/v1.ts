@@ -1,11 +1,13 @@
-import express from 'express';
+import express from "express";
 
-import { runtimesRoutes } from './runtimes/runtimes';
-import { executeRoutes } from './execute/execute';
+import { runtimesRouter } from "./runtimes/runtimes";
+import { executeRouter } from "./execute/execute";
+import { authRouter } from "./auth/auth";
 
 const v1Router = express.Router();
 
-v1Router.use('/runtimes', runtimesRoutes);
-v1Router.use('/execute', executeRoutes);
+v1Router.use("/runtimes", runtimesRouter);
+v1Router.use("/execute", executeRouter);
+v1Router.use("/auth", authRouter);
 
-export { v1Router }; 
+export { v1Router };

@@ -4,8 +4,8 @@ import Logger from "js-logger";
 import { RemoteJob } from "../../../core/RemoteJob";
 import { RemoteJobParams } from "../../../models/remote-job";
 import { RemoteOutputResponse } from "../../../models/resposnes/execute-responses";
-import { DockerLangData } from "../../../data/docker-lang-data";
-import { runtimes } from "../../../data/runtimes";
+import { DockerLangData } from "../../../data/DockerLangData";
+import { runtimes } from "../../../data/Runtimes";
 import { ExecuteRequestBody } from "../../../models/requests/execute-request";
 
 const logger = Logger.get("ExecuteRouter");

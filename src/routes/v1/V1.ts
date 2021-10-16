@@ -1,8 +1,8 @@
 import express from "express";
 
-import { runtimesRouter } from "./runtimes/runtimes";
-import { executeRouter } from "./execute/execute";
-import { authRouter } from "./auth/auth";
+import { runtimesRouter } from "./runtimes/RuntimesRouter";
+import { executeRouter } from "./execute/ExecuteRouter";
+import { authRouter } from "./auth/AuthRouter";
 
 const v1Router = express.Router();
 
